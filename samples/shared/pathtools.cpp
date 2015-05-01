@@ -17,11 +17,35 @@
 #elif defined(LINUX)
 #include <dlfcn.h>
 #include <stdio.h>
+#include <unistd.h>
 #endif
 
 #include <sys/stat.h>
 
 #include <algorithm>
+
+//TODO: proper linux compatibility
+#ifdef LINUX
+#include <strings.h>
+#define APIENTRY
+void OutputDebugStringA(char buffer[2048]) {
+        printf("%s", buffer);
+}
+
+int stricmp(const char *s1, const char *s2) {
+        return strcasecmp(s1, s2);
+}
+
+typedef int errno_t;
+errno_t fopen_s(FILE **f, const char *name, const char *mode) {
+    errno_t ret = 0;
+    *f = fopen(name, mode);
+    /* Can't be sure about 1-to-1 mapping of errno and MS' errno_t */
+    if (!*f)
+        ret = errno;
+    return ret;
+}
+#endif
 
 /** Returns the path (including filename) to the current executable */
 std::string Path_GetExecutablePath()

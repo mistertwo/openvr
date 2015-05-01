@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <GL/glew.h>
 #include <SDL_opengl.h>
-#include <gl/glu.h>
+#include <GL/glu.h>
 #include <stdio.h>
 #include <string>
 #include <cstdlib>
@@ -13,6 +13,26 @@
 #include "shared/lodepng.h"
 #include "shared/Matrices.h"
 #include "shared/pathtools.h"
+
+//TODO: proper linux compatibility
+#ifdef LINUX
+#define APIENTRY
+void OutputDebugStringA(char buffer[2048]) {
+        printf("%s", buffer);
+}
+
+int stricmp(const char *s1, const char *s2) {
+        return strcasecmp(s1, s2);
+}
+
+int vsprintf_s(char *buffer, const char *format, va_list argptr) {
+    return vsprintf(buffer, format, argptr);
+}
+
+int sprintf_s(char *buffer, size_t sizeOfBuffer, const char *format, const char* args) {
+    return snprintf(buffer, sizeOfBuffer, format, args);
+}
+#endif
 
 class CGLRenderModel
 {
